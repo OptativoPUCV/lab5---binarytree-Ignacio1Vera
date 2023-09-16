@@ -131,7 +131,6 @@ void removeNode(TreeMap* tree, TreeNode* node) {
             child->parent = node->parent;
         }
     }
-
     // Liberar memoria
     free(node->pair->key);
     free(node->pair->value);
@@ -180,6 +179,12 @@ Pair* searchTreeMap(TreeMap* tree, void* key) {
 
 
 Pair* upperBound(TreeMap* tree, void* key) {
+    if (tree == NULL || tree->root == NULL) return NULL;
+
+    if (searchTreeMap(tree, key) != NULL) {
+        return tree->current->pair;
+    }
+
     TreeNode* current = tree->root;
     TreeNode* ub_node = NULL;
 
