@@ -58,46 +58,34 @@ void insertTreeMap(TreeMap* tree, void* key, void* value) {
         return;
     }
 
-    if (tree->root == NULL) 
-    {
+    if (tree->root == NULL) {
         tree->root = newNode;
         tree->current = newNode;
-    } else {
-        TreeNode* current = tree->root;
+        return;
+    }
 
-        while (1) 
-        {
-            int comparison = tree->lower_than(key, current->pair->key);
+    TreeNode* current = tree->root;
+    TreeNode* parent = NULL;
 
-            if (comparison < 0) {
-                if (current->left == NULL) 
-                {
-                    newNode->parent = current;
-                    current->left = newNode;
-                    tree->current = newNode;
-                    break;
-                } 
-                else 
-                {
-                    current = current->left;
-                }
-            } else if (comparison > 0) 
-            {
-                if (current->right == NULL) 
-                {
-                    newNode->parent = current;
-                    current->right = newNode;
-                    tree->current = newNode;
-                    break;
-                } 
-                else 
-                    current = current->right;
-            } 
-            else 
-                break;
+    while (current != NULL) {
+        parent = current;
+        if (tree->lower_than(key, current->pair->key)) {
+            current = current->left;
+        } else {
+            current = current->right;
         }
     }
+
+    newNode->parent = parent;
+    if (tree->lower_than(key, parent->pair->key)) {
+        parent->left = newNode;
+    } else {
+        parent->right = newNode;
+    }
+
+    tree->current = newNode;
 }
+
 
 
 TreeNode* minimum(TreeNode* x) {
@@ -144,7 +132,6 @@ void removeNode(TreeMap* tree, TreeNode* node) {
             }
             child->parent = node->parent;
         } else {
-            // Nodo raíz con un hijo
             tree->root = child;
             child->parent = NULL;
         }
@@ -154,6 +141,7 @@ void removeNode(TreeMap* tree, TreeNode* node) {
         free(node);
     }
 }
+
 
 
 void eraseTreeMap(TreeMap *tree, void *key) {
@@ -218,6 +206,8 @@ Pair* upperBound(TreeMap* tree, void* key) {
 
     return NULL;
 }
+
+
 
 
 Pair* firstTreeMap(TreeMap* tree) {
