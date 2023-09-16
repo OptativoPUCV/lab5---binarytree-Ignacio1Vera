@@ -48,38 +48,44 @@ TreeMap *createTreeMap(int (*lt)(void *key1, void *key2)) {
   return map;
 }
 
-void insertTreeMap(TreeMap * tree, void* key, void * value) 
-{
-  if(searchTreeMap(tree, key) != NULL)
-    return;
+void insertTreeMap(TreeMap* tree, void* key, void* value) {
+    if (searchTreeMap(tree, key) != NULL) {
+        return;
+    }
 
-  TreeNode* parent = NULL;
-  TreeNode* current = tree->root;
+    TreeNode* newNode = createTreeNode(key, value);
+    if (newNode == NULL) {
+        return;
+    }
 
-  // Encuentra el lugar donde se debe insertar el nuevo nodo
-  while(current != NULL)
-  {
-    parent = current;
-    if(tree->lower_than(key, current->pair->key))
-      current = current->left;
-    else
-      current = current->right;
-  }
+    if (tree->root == NULL) {
+        tree->root = newNode;
+        tree->current = newNode;
+        return;
+    }
 
-  // Crea el nuevo nodo y establece su parent
-  TreeNode* nuevo = createTreeNode(key, value);
-  nuevo->parent = parent;
+    TreeNode* current = tree->root;
+    TreeNode* parent = NULL;
 
-  // Establece el nuevo nodo en el árbol
-  if(parent == NULL)
-    tree->root = nuevo;
-  else if (tree->lower_than(key, parent->pair->key))
-    parent->left = nuevo;
-  else
-    parent->right = nuevo;
+    while (current != NULL) {
+        parent = current;
+        if (tree->lower_than(key, current->pair->key)) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+    }
 
-  tree->current = nuevo;
+    newNode->parent = parent;
+    if (tree->lower_than(key, parent->pair->key)) {
+        parent->left = newNode;
+    } else {
+        parent->right = newNode;
+    }
+
+    tree->current = newNode;
 }
+
 
 
 TreeNode* minimum(TreeNode* x) {
@@ -145,60 +151,72 @@ void eraseTreeMap(TreeMap *tree, void *key) {
   removeNode(tree, node);
 }
 
-Pair* searchTreeMap(TreeMap* tree, void* key) {
+Pair * searchTreeMap(TreeMap * tree, void* key) 
+{
+  if(tree == NULL || tree->root == NULL)
+    return NULL;
+
+  TreeNode* current = tree->root; 
+  TreeNode* found = NULL;
+
+  while(current != NULL)
+  {
+    int comparison = tree->lower_than(key, current->pair->key);
+
+    if (comparison == 0)
+    {
+      found = current;  // Actualiza el nodo encontrado
+      break;
+    }
+    else if (comparison < 0)
+    {
+      current = current->left;
+    }
+    else
+    {
+      current = current->right;
+    }
+  }
+
+  if (found != NULL)
+  {
+    tree->current = found;
+    return found->pair;
+  }
+  
+  // Si no se encuentra ninguna coincidencia, actualiza el puntero actual a NULL
+  tree->current = NULL;
+  return NULL;
+}
+
+
+
+
+Pair* upperBound(TreeMap* tree, void* key) {
     TreeNode* current = tree->root;
-    TreeNode* found = NULL;
+    TreeNode* aux = NULL;
 
     while (current != NULL) {
         int comparison = tree->lower_than(key, current->pair->key);
 
         if (comparison == 0) {
-            found = current;
-            break;
+            tree->current = current;
+            return current->pair;
         } else if (comparison < 0) {
+            aux = current;
             current = current->left;
         } else {
             current = current->right;
         }
     }
 
-    if (found != NULL) {
-        tree->current = found;
-        return found->pair;
-    } else {
-        tree->current = NULL;
-        return NULL;
-    }
-}
-
-
-
-Pair* upperBound(TreeMap* tree, void* key) {
-    TreeNode* current = tree->root;
-    TreeNode* aux = NULL;  // Nodo auxiliar para el upperBound
-
-    while(current != NULL)
-    {
-      if(tree->lower_than(current->pair->key, key))
-          current = current->right;
-      else if(is_equal(tree, current->pair->key, key))
-          return current->pair;
-      else
-      {
-          aux = current;  // Actualiza el nodo auxiliar al moverse hacia la izquierda
-          current = current->left;
-      }      
-    }
-
-    if(aux != NULL)
-    {
+    if (aux != NULL) {
         tree->current = aux;
         return aux->pair;
     }
 
     return NULL;
 }
-
 
 
 
