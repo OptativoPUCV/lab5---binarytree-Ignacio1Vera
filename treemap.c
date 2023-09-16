@@ -101,7 +101,7 @@ void removeNode(TreeMap* tree, TreeNode* node) {
     }
 
     if (node->left == NULL && node->right == NULL) {
-        //sin hijos
+        // Nodo sin hijos
         if (node->parent == NULL) {
             tree->root = NULL;
         } else {
@@ -112,7 +112,7 @@ void removeNode(TreeMap* tree, TreeNode* node) {
             }
         }
     } else if (node->left != NULL && node->right != NULL) {
-        //dos hijos
+        // dos hijos
         TreeNode* successor = minimum(node->right);
         node->pair = successor->pair;
         removeNode(tree, successor);
@@ -181,29 +181,30 @@ Pair* searchTreeMap(TreeMap* tree, void* key) {
 
 Pair* upperBound(TreeMap* tree, void* key) {
     TreeNode* current = tree->root;
-    TreeNode* aux = NULL;
+    TreeNode* aux = NULL;  // Nodo auxiliar para el upperBound
 
-    while (current != NULL) {
-        int comparison = tree->lower_than(key, current->pair->key);
-
-        if (comparison == 0) {
-            tree->current = current;
-            return current->pair;
-        } else if (comparison < 0) {
-            aux = current;
-            current = current->left;
-        } else {
-            current = current->right;
-        }
+    while(current != NULL)
+    {
+      if(tree->lower_than(current->pair->key, key))
+          current = current->right;
+      else if(is_equal(tree, current->pair->key, key))
+          return current->pair;
+      else
+      {
+          aux = current;  // Actualiza el nodo auxiliar al moverse hacia la izquierda
+          current = current->left;
+      }      
     }
 
-    if (aux != NULL) {
+    if(aux != NULL)
+    {
         tree->current = aux;
         return aux->pair;
     }
 
     return NULL;
 }
+
 
 
 
