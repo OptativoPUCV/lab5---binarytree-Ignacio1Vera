@@ -102,20 +102,15 @@ void removeNode(TreeMap* tree, TreeNode* node) {
 
     if (node->left == NULL && node->right == NULL) {
         // Nodo sin hijos
-        if (node->parent != NULL) {
+        if (node->parent == NULL) {
+            tree->root = NULL;
+        } else {
             if (node->parent->left == node) {
                 node->parent->left = NULL;
             } else {
                 node->parent->right = NULL;
             }
-        } else {
-            // Nodo raíz sin hijos
-            tree->root = NULL;
         }
-        free(node->pair->key);
-        free(node->pair->value);
-        free(node->pair);
-        free(node);
     } else if (node->left != NULL && node->right != NULL) {
         // Nodo con dos hijos
         TreeNode* successor = minimum(node->right);
@@ -124,23 +119,26 @@ void removeNode(TreeMap* tree, TreeNode* node) {
     } else {
         // Nodo con un hijo
         TreeNode* child = (node->left != NULL) ? node->left : node->right;
-        if (node->parent != NULL) {
+        if (node->parent == NULL) {
+            tree->root = child;
+            child->parent = NULL;
+        } else {
             if (node->parent->left == node) {
                 node->parent->left = child;
             } else {
                 node->parent->right = child;
             }
             child->parent = node->parent;
-        } else {
-            tree->root = child;
-            child->parent = NULL;
         }
-        free(node->pair->key);
-        free(node->pair->value);
-        free(node->pair);
-        free(node);
     }
+
+    // Liberar memoria
+    free(node->pair->key);
+    free(node->pair->value);
+    free(node->pair);
+    free(node);
 }
+
 
 
 
