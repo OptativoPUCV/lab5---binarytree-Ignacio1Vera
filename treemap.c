@@ -151,44 +151,31 @@ void eraseTreeMap(TreeMap *tree, void *key) {
   removeNode(tree, node);
 }
 
-Pair * searchTreeMap(TreeMap * tree, void* key) 
-{
-  if(tree == NULL || tree->root == NULL)
-    return NULL;
+Pair* searchTreeMap(TreeMap* tree, void* key) {
+    TreeNode* current = tree->root;
+    TreeNode* found = NULL;
 
-  TreeNode* current = tree->root; 
-  TreeNode* found = NULL;
+    while (current != NULL) {
+        int comparison = tree->lower_than(key, current->pair->key);
 
-  while(current != NULL)
-  {
-    int comparison = tree->lower_than(key, current->pair->key);
-
-    if (comparison == 0)
-    {
-      found = current;  // Actualiza el nodo encontrado
-      break;
+        if (comparison == 0) {
+            found = current;
+            break;
+        } else if (comparison < 0) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
     }
-    else if (comparison < 0)
-    {
-      current = current->left;
-    }
-    else
-    {
-      current = current->right;
-    }
-  }
 
-  if (found != NULL)
-  {
-    tree->current = found;
-    return found->pair;
-  }
-  
-  // Si no se encuentra ninguna coincidencia, actualiza el puntero actual a NULL
-  tree->current = NULL;
-  return NULL;
+    if (found != NULL) {
+        tree->current = found;
+        return found->pair;
+    } else {
+        tree->current = NULL;
+        return NULL;
+    }
 }
-
 
 
 
