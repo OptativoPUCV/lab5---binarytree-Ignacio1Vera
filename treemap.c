@@ -98,24 +98,24 @@ void eraseTreeMap(TreeMap *tree, void *key) {
   removeNode(tree, node);
 }
 
-Pair *searchTreeMap(TreeMap *tree, void *key) {
-  TreeNode *current = tree->root;
+Pair *searchTreeMap(TreeMap *tree, void *key) 
+{
+    TreeNode *current = tree->root;
 
-  while (current != NULL) {
-    int comparison = tree->lower_than(key, current->pair->key);
+    while (current != NULL) {
+        int comparison = tree->lower_than(key, current->pair->key);
 
-    if (comparison == 0) {
-
-      tree->current = current;
-      return current->pair;
-    } else if (comparison < 0)
-      current = current->left;
-    else
-      current = current->right;
-  }
-
-  tree->current = NULL;
-  return NULL;
+        if (comparison == 0) {
+            tree->current = current;
+            return current->pair;
+        } else if (comparison < 0) {
+            current = current->left;
+        } else {
+            current = current->right;
+        }
+    }
+    tree->current = NULL;
+    return NULL;
 }
 
 Pair *upperBound(TreeMap *tree, void *key) { return NULL; }
